@@ -2,27 +2,27 @@ use std::boxed::Box;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-struct Date {
+pub struct Date {
     day: i8,
     month: i8,
     year: i32,
 }
 
 impl Date {
-    fn new(day: i8, month: i8, year: i32) -> Self {
+    pub fn new(day: i8, month: i8, year: i32) -> Self {
         Self { day, month, year }
     }
 }
 
 #[derive(Debug, Clone)]
-enum TaskState {
+pub enum TaskState {
     DEFINED,
     IN_PROGRESS,
     DONE,
 }
 
 #[derive(Debug, Clone)]
-struct Task {
+pub struct Task {
     name: String,
     description: String,
     state: TaskState,
@@ -36,10 +36,14 @@ impl Task {
             state,
         }
     }
+
+    pub fn get_name(self) -> String {
+        self.name
+    }
 }
 
 #[derive(Debug, Clone)]
-struct DayNotes {
+pub struct DayNotes {
     notes: String,
     tasks: Vec<Task>,
 }
@@ -51,16 +55,25 @@ impl DayNotes {
 }
 
 #[derive(Debug, Clone)]
-struct EngineeringDayBook {
+pub struct EngineeringDayBook {
     day_notes: HashMap<Date, DayNotes>,
 }
 
 impl EngineeringDayBook {
+    pub fn default() -> Self {
+        Self {
+            day_notes: HashMap::new(),
+        }
+    }
     fn new(day_notes: HashMap<Date, DayNotes>) -> Self {
         Self { day_notes }
     }
 
-    fn example_data() -> Self {
+    pub fn get_defined_tasks(self, date: Date) -> Vec<Task> {
+        return self.day_notes[&date].tasks.clone();
+    }
+
+    pub fn example_data() -> Self {
         let mut note_map = HashMap::new();
 
         note_map.insert(

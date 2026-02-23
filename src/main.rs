@@ -1,6 +1,7 @@
-use crate::app::App;
+use crate::{app::App, edb::EngineeringDayBook};
 
 pub mod app;
+pub mod edb;
 pub mod event;
 pub mod ui;
 
@@ -8,7 +9,8 @@ pub mod ui;
 async fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
     let terminal = ratatui::init();
-    let result = App::new().run(terminal).await;
+    let mut app = App::new(EngineeringDayBook::example_data());
+    let result = app.run(terminal).await;
     ratatui::restore();
     result
 }

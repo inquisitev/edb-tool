@@ -1,8 +1,11 @@
+use crate::edb::{Date, EngineeringDayBook, Task};
 use crate::event::{AppEvent, Event, EventHandler};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::prelude::*;
 use ratatui::widgets::Block;
 use ratatui::widgets::Borders;
+use ratatui::widgets::List;
+use ratatui::widgets::ListItem;
 use ratatui::widgets::Paragraph;
 use ratatui::DefaultTerminal;
 
@@ -15,6 +18,8 @@ pub struct App {
     pub counter: u8,
     /// Event handler.
     pub events: EventHandler,
+
+    day_book: EngineeringDayBook,
 }
 
 impl Default for App {
@@ -23,14 +28,19 @@ impl Default for App {
             running: true,
             counter: 0,
             events: EventHandler::new(),
+            day_book: EngineeringDayBook::default(),
         }
     }
 }
 
 impl App {
-    /// Constructs a new instance of [`App`].
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(day_book: EngineeringDayBook) -> Self {
+        Self {
+            running: true,
+            counter: 0,
+            events: EventHandler::new(),
+            day_book,
+        }
     }
 
     pub fn render_app(&mut self, frame: &mut Frame) {
@@ -47,11 +57,16 @@ impl App {
                 Constraint::Percentage(33),
             ])
             .split(vertical_layout[0]);
+        let day_book = self.day_book.clone();
 
-        frame.render_widget(
-            Block::new().borders(Borders::ALL).title("Todo"),
-            board_layout[0],
-        );
+        let tasks = day_book.get_defined_tasks(Date::new(1, 2, 2020));
+        let items = tasks.iter().map(|t| ListItem::from(t.clone().get_name()));
+
+        // Create a List from all list items and highlight the currently selected one
+        let block = Block::new().borders(Borders::ALL).title("Todo");
+        let list = List::new(items).block(block).highlight_symbol(">");
+
+        frame.render_widget(list, board_layout[0]);
         frame.render_widget(
             Block::new().borders(Borders::ALL).title("In Progress"),
             board_layout[1],
