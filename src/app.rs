@@ -57,25 +57,37 @@ impl App {
                 Constraint::Percentage(33),
             ])
             .split(vertical_layout[0]);
-        let day_book = self.day_book.clone();
+        let day_book = &self.day_book;
 
-        let tasks = day_book.get_defined_tasks(Date::new(1, 2, 2020));
-        let items = tasks.iter().map(|t| ListItem::from(t.clone().get_name()));
+        let defined_tasks = &day_book.get_defined_tasks(Date::new(1, 2, 2020));
+        let defined_task_items = defined_tasks.iter().map(|t| ListItem::from(t.get_name()));
+        let defined_block = Block::new()
+            .border_style(Style::default().fg(Color::Magenta))
+            .borders(Borders::ALL)
+            .title("Todo");
+        let defined_list = List::new(defined_task_items)
+            .block(defined_block)
+            .highlight_symbol(">");
 
-        // Create a List from all list items and highlight the currently selected one
-        let block = Block::new().borders(Borders::ALL).title("Todo");
-        let list = List::new(items).block(block).highlight_symbol(">");
+        let in_progress_tasks = &day_book.get_in_progress_tasks(Date::new(1, 2, 2020));
+        let in_progress_task_items = in_progress_tasks
+            .iter()
+            .map(|t| ListItem::from(t.get_name()));
+        let in_progress_block = Block::new().borders(Borders::ALL).title("In Progress");
+        let in_progress_list = List::new(in_progress_task_items)
+            .block(in_progress_block)
+            .highlight_symbol(">");
 
-        frame.render_widget(list, board_layout[0]);
-        frame.render_widget(
-            Block::new().borders(Borders::ALL).title("In Progress"),
-            board_layout[1],
-        );
-        frame.render_widget(
-            Block::new().borders(Borders::ALL).title("Done"),
-            board_layout[2],
-        );
+        let finished_tasks = &day_book.get_finished_tasks(Date::new(1, 2, 2020));
+        let finished_task_items = finished_tasks.iter().map(|t| ListItem::from(t.get_name()));
+        let finished_block = Block::new().borders(Borders::ALL).title("Finished");
+        let finished_list = List::new(finished_task_items)
+            .block(finished_block)
+            .highlight_symbol(">");
 
+        frame.render_widget(defined_list, board_layout[0]);
+        frame.render_widget(in_progress_list, board_layout[1]);
+        frame.render_widget(finished_list, board_layout[2]);
         frame.render_widget(
             Block::new().borders(Borders::ALL).title("Notes"),
             vertical_layout[1],

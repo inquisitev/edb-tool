@@ -14,7 +14,7 @@ impl Date {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TaskState {
     DEFINED,
     IN_PROGRESS,
@@ -37,8 +37,8 @@ impl Task {
         }
     }
 
-    pub fn get_name(self) -> String {
-        self.name
+    pub fn get_name(&self) -> String {
+        self.name.clone()
     }
 }
 
@@ -69,8 +69,28 @@ impl EngineeringDayBook {
         Self { day_notes }
     }
 
-    pub fn get_defined_tasks(self, date: Date) -> Vec<Task> {
-        return self.day_notes[&date].tasks.clone();
+    pub fn get_defined_tasks(&self, date: Date) -> Vec<&Task> {
+        return self.day_notes[&date]
+            .tasks
+            .iter()
+            .filter(|t| t.state == TaskState::DEFINED)
+            .collect();
+    }
+
+    pub fn get_in_progress_tasks(&self, date: Date) -> Vec<&Task> {
+        return self.day_notes[&date]
+            .tasks
+            .iter()
+            .filter(|t| t.state == TaskState::IN_PROGRESS)
+            .collect();
+    }
+
+    pub fn get_finished_tasks(&self, date: Date) -> Vec<&Task> {
+        return self.day_notes[&date]
+            .tasks
+            .iter()
+            .filter(|t| t.state == TaskState::DONE)
+            .collect();
     }
 
     pub fn example_data() -> Self {
