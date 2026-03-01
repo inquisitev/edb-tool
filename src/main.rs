@@ -3,6 +3,8 @@ use crate::{app::App, edb::EngineeringDayBook};
 pub mod app;
 pub mod edb;
 pub mod event;
+pub mod taskcard;
+pub mod tasklist;
 pub mod ui;
 
 #[tokio::main]

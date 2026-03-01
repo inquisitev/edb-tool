@@ -29,7 +29,7 @@ pub struct Task {
 }
 
 impl Task {
-    fn new(name: String, description: String, state: TaskState) -> Self {
+    pub fn new(name: String, description: String, state: TaskState) -> Self {
         Self {
             name,
             description,
