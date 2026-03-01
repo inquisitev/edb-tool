@@ -1,5 +1,6 @@
 use crate::edb::{Date, EngineeringDayBook, Task};
 use crate::event::{AppEvent, Event, EventHandler};
+use crate::tasklist::{TaskList, TaskListState};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::prelude::*;
 use ratatui::widgets::Block;
@@ -20,6 +21,9 @@ pub struct App {
     pub events: EventHandler,
 
     day_book: EngineeringDayBook,
+    todo_column_state: TaskListState,
+    inprogress_column_state: TaskListState,
+    done_column_state: TaskListState,
 }
 
 impl Default for App {
@@ -29,6 +33,9 @@ impl Default for App {
             counter: 0,
             events: EventHandler::new(),
             day_book: EngineeringDayBook::default(),
+            todo_column_state: TaskListState::new(3),
+            inprogress_column_state: TaskListState::new(0),
+            done_column_state: TaskListState::new(0),
         }
     }
 }
@@ -40,6 +47,9 @@ impl App {
             counter: 0,
             events: EventHandler::new(),
             day_book,
+            todo_column_state: TaskListState::new(0),
+            inprogress_column_state: TaskListState::new(0),
+            done_column_state: TaskListState::new(0),
         }
     }
 
@@ -58,31 +68,22 @@ impl App {
             ])
             .split(vertical_layout[0]);
         let day_book = &self.day_book;
+        let todo_tasks: Vec<Task> = self.day_book.get_defined_tasks(Date::new(4, 2, 2020));
+        let inprogress_tasks: Vec<Task> =
+            self.day_book.get_in_progress_tasks(Date::new(2, 2, 2020));
+        let done_tasks: Vec<Task> = self.day_book.get_finished_tasks(Date::new(2, 2, 2020));
 
-        let defined_block = Block::new()
-            .border_style(Style::default().fg(Color::Magenta))
-            .borders(Borders::ALL)
-            .title("Todo");
+        let todo_column = TaskList::new(String::from("Todo"), todo_tasks);
+        // let inprogress_column = TaskList::new(String::from("In Progress"), inprogress_tasks);
+        // let done_colmn = TaskList::new(String::from("Done"), done_tasks);
 
-        let defined_layout = Layout::default()
-            .direction(Direction::Vertical)
-            .constraints(vec![
-                Constraint::Percentage(33),
-                Constraint::Percentage(33),
-                Constraint::Percentage(33),
-            ])
-            .split(defined_block.inner(board_layout[0]));
-
-        let test = Block::new().borders(Borders::ALL).title("Test");
-        frame.render_widget(test, defined_layout[0]);
-
-        let in_progress_block = Block::new().borders(Borders::ALL).title("In Progress");
-
-        let finished_block = Block::new().borders(Borders::ALL).title("Finished");
-
-        frame.render_widget(defined_block, board_layout[0]);
-        frame.render_widget(in_progress_block, board_layout[1]);
-        frame.render_widget(finished_block, board_layout[2]);
+        frame.render_stateful_widget(todo_column, board_layout[0], &mut self.todo_column_state);
+        // frame.render_stateful_widget(
+        //     inprogress_column,
+        //     board_layout[1],
+        //     &mut self.inprogress_column_state,
+        // );
+        // frame.render_stateful_widget(done_colmn, board_layout[2], &mut self.done_column_state);
         frame.render_widget(
             Block::new().borders(Borders::ALL).title("Notes"),
             vertical_layout[1],

@@ -69,27 +69,30 @@ impl EngineeringDayBook {
         Self { day_notes }
     }
 
-    pub fn get_defined_tasks(&self, date: Date) -> Vec<&Task> {
+    pub fn get_defined_tasks(&self, date: Date) -> Vec<Task> {
         return self.day_notes[&date]
             .tasks
             .iter()
             .filter(|t| t.state == TaskState::DEFINED)
+            .cloned()
             .collect();
     }
 
-    pub fn get_in_progress_tasks(&self, date: Date) -> Vec<&Task> {
+    pub fn get_in_progress_tasks(&self, date: Date) -> Vec<Task> {
         return self.day_notes[&date]
             .tasks
             .iter()
             .filter(|t| t.state == TaskState::IN_PROGRESS)
+            .cloned()
             .collect();
     }
 
-    pub fn get_finished_tasks(&self, date: Date) -> Vec<&Task> {
+    pub fn get_finished_tasks(&self, date: Date) -> Vec<Task> {
         return self.day_notes[&date]
             .tasks
             .iter()
             .filter(|t| t.state == TaskState::DONE)
+            .cloned()
             .collect();
     }
 
@@ -181,12 +184,12 @@ impl EngineeringDayBook {
                     Task::new(
                         String::from("Split domain and persistence layers"),
                         String::from("Keep SQLite logic isolated from core structs."),
-                        TaskState::DONE,
+                        TaskState::DEFINED,
                     ),
                     Task::new(
                         String::from("Add unit tests"),
                         String::from("Cover date encoding and task transitions."),
-                        TaskState::IN_PROGRESS,
+                        TaskState::DEFINED,
                     ),
                     Task::new(
                         String::from("Prepare migration strategy"),
@@ -195,6 +198,26 @@ impl EngineeringDayBook {
                     ),
                     Task::new(
                         String::from("Document public API"),
+                        String::from("Write README and usage examples."),
+                        TaskState::DEFINED,
+                    ),
+                    Task::new(
+                        String::from("Document public API 1"),
+                        String::from("Write README and usage examples."),
+                        TaskState::DEFINED,
+                    ),
+                    Task::new(
+                        String::from("Document public API 2"),
+                        String::from("Write README and usage examples."),
+                        TaskState::DEFINED,
+                    ),
+                    Task::new(
+                        String::from("Document public API 3 "),
+                        String::from("Write README and usage examples."),
+                        TaskState::DEFINED,
+                    ),
+                    Task::new(
+                        String::from("Document public API 4"),
                         String::from("Write README and usage examples."),
                         TaskState::DEFINED,
                     ),
