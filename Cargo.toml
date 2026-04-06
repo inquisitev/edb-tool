@@ -21,4 +21,4 @@ opt-level = "s"
 strip = true
 
 [dev-dependencies]
-insta = "1.46.3"
+insta = "1.47.2"
